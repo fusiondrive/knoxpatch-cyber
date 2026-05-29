@@ -1,0 +1,47 @@
+#!/sbin/sh
+
+#################
+# Initialization
+#################
+
+umask 022
+
+OUTFD=$2
+ZIPFILE=$3
+
+# Minimal ui_print before functions are loaded
+ui_print() { echo "$1"; }
+
+mount /data 2>/dev/null
+
+#########################
+# Detect root environment
+#########################
+
+if [ -f /data/adb/magisk/util_functions.sh ]; then
+  # Magisk environment
+  . /data/adb/magisk/util_functions.sh
+  [ $MAGISK_VER_CODE -lt 20400 ] && {
+    ui_print "Please install Magisk v20.4+!"
+    exit 1
+  }
+  install_module
+elif [ -d /data/adb/ksu ] || [ -n "$KSU_VER_CODE" ] || [ "$KSU" = "true" ]; then
+  # KernelSU / KernelSU Next environment
+  # Set up required variables if not already set by ksud
+  [ -z "$TMPDIR" ] && TMPDIR=/dev/tmp
+  mkdir -p "$TMPDIR"
+  [ -z "$NVBASE" ] && NVBASE=/data/adb
+  [ -z "$MODID" ] && MODID=$(unzip -p "$ZIPFILE" module.prop 2>/dev/null | grep "^id=" | cut -d= -f2)
+  [ -z "$MODPATH" ] && MODPATH="$NVBASE/modules_update/$MODID"
+  [ -z "$MAGISK_VER_CODE" ] && MAGISK_VER_CODE=25200
+  [ -z "$KSU" ] && KSU=true
+  BOOTMODE=true
+  unzip -qjo "$ZIPFILE" 'common/functions.sh' -d "$TMPDIR" >&2
+  . "$TMPDIR/functions.sh"
+else
+  ui_print "ERROR: Neither Magisk nor KernelSU environment found!"
+  ui_print "Please install Magisk v20.4+ or KernelSU."
+  exit 1
+fi
+exit 0
