@@ -1,6 +1,6 @@
 id=knoxpatch-cyber
 name=KnoxPatch + Enhancer Module
-version=v8.5-X910
+version=v8.0
 versionCode=162
-author=@CyberK1 | Patches by UN1CA ROM | X910 port
-description= SM-X910 Tab S9 Ultra OneUI 8.5 Knox Patched without LSPosed
+author=@CyberK1 | Patches by UN1CA ROM | S20U port by KnoxPatch-Cyber
+description= S20U (SM-G988N) OneUI 8.0 Knox Patched - Astro-OS (z3q) without LSPosed
